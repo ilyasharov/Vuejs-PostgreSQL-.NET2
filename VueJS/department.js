@@ -122,14 +122,10 @@ Add Department
     v-if="DepartmentId!=0" class="btn btn-primary">
     Update
     </button>
-
     </div>
-
     </div>
-
     </div>
 </div>
-
 </div>
 
 `,
@@ -197,7 +193,6 @@ methods:{
     },
 
     FilterFn(){
-
         var DepartmentIdFilter=this.DepartmentIdFilter;
         var DepartmentNameFilter=this.DepartmentNameFilter;
 
@@ -205,7 +200,6 @@ methods:{
             function(el){
                 return el.DepartmentId.toString().toLowerCase().includes(
                     DepartmentIdFilter.toString().trim().toLowerCase()
-
                 )&& 
                 el.DepartmentName.toString().toLowerCase().includes(
                     DepartmentNameFilter.toString().trim().toLowerCase())
@@ -226,6 +220,5 @@ methods:{
 
 mounted:function(){
     this.refreshData();
-}
-
+    }
 }

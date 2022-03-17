@@ -114,12 +114,9 @@ Add Employee
     </button>
 
     </div>
-
     </div>
-
     </div>
 </div>
-
 </div>
 
 `,
@@ -222,6 +219,5 @@ methods:{
 
 mounted:function(){
     this.refreshData();
-}
-
+    }
 }
