@@ -9,21 +9,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_V2.Models;
 
-namespace WebAPI_V2.Controllers
-{
+namespace WebAPI_V2.Controllers{
     [Route("api/[controller]")]
     [ApiController]
-    public class DepartmentController : ControllerBase
-    {
+    public class DepartmentController : ControllerBase{
         private readonly IConfiguration _configuration;
-        public DepartmentController(IConfiguration configuration)
-        {
+        public DepartmentController(IConfiguration configuration){
             _configuration = configuration;
         }
 
         [HttpGet]
-        public JsonResult Get()
-        {
+        public JsonResult Get(){
             string query = @"
                 select DepartmentId as ""DepartmentId"",
                     DepartmentName as ""DepartmentName""
@@ -32,69 +28,66 @@ namespace WebAPI_V2.Controllers
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
+                
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
+                    
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult(table);
         }
 
         [HttpPost]
-        public JsonResult Post(Department dep)
-        {
+        public JsonResult Post(Department dep){
             string query = @"
                 insert into Department(DepartmentName)
-                    values (@DepartmentName)
-            ";
+                    values (@DepartmentName)";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
+                
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
+                
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
+                   
+                   myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult("Added Successfully");
         }
 
         [HttpPut]
-        public JsonResult Put(Department dep)
-        {
+        public JsonResult Put(Department dep){
             string query = @"
                 update Department
                 set DepartmentName = @DepartmentName
-                where DepartmentId = @DepartmentId
-            ";
+                where DepartmentId = @DepartmentId";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+            
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
+                
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
+                
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
+                    
                     myCommand.Parameters.AddWithValue("@DepartmentId", dep.DepartmentId);
                     myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
                     myReader = myCommand.ExecuteReader();
@@ -103,28 +96,27 @@ namespace WebAPI_V2.Controllers
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult("Update successfully");
         }
 
         [HttpDelete("{id}")]
-        public JsonResult Delete(int id)
-        {
+        public JsonResult Delete(int id){
             string query = @"
                 delete from Department
-                where DepartmentId = @DepartmentId
-            ";
+                where DepartmentId = @DepartmentId";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
+                
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
+
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
+                   
                     myCommand.Parameters.AddWithValue("@DepartmentId", id);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
@@ -132,7 +124,6 @@ namespace WebAPI_V2.Controllers
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult("Deleted successfully");

@@ -14,8 +14,7 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
-namespace WebAPI_V2
-{
+namespace WebAPI_V2{
     public class Startup{
         
         public Startup(IConfiguration configuration){

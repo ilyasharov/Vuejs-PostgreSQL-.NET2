@@ -11,23 +11,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPI_V2.Models;
 
-namespace WebAPI_V2.Controllers
-{
+namespace WebAPI_V2.Controllers{
+    
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
-    {
+    public class EmployeeController : ControllerBase{
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
-        public EmployeeController(IConfiguration configuration, IWebHostEnvironment env)
-        {
+        public EmployeeController(IConfiguration configuration, IWebHostEnvironment env){
             _configuration = configuration;
             _env = env;
         }
 
         [HttpGet]
-        public JsonResult Get()
-        {
+        public JsonResult Get(){
             string query = @"
                 select EmployeeId as ""EmployeeId"",
                     EmployeeName as ""EmployeeName"",
@@ -39,116 +36,117 @@ namespace WebAPI_V2.Controllers
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+            
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
+                
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
+                
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult(table);
         }
 
         [HttpPost]
-        public JsonResult Post(Employee emp)
-        {
+        public JsonResult Post(Employee emp){
             string query = @"
                 insert into Employee (EmployeeName, Department, DateOfJoining, PhotoFileName)
-                    values           (@EmployeeName, @Department, @DateOfJoining, @PhotoFileName)
-            ";
+                    values           (@EmployeeName, @Department, @DateOfJoining, @PhotoFileName)";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+            
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
+                
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
+                
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
+                    
                     myCommand.Parameters.AddWithValue("@EmployeeName", emp.EmployeeName);
                     myCommand.Parameters.AddWithValue("@Department", emp.Department);
                     myCommand.Parameters.AddWithValue("@DateOfJoining", Convert.ToDateTime(emp.DateOfJoining));
                     myCommand.Parameters.AddWithValue("@PhotoFileName", emp.PhotoFileName);
+                    
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult("Added Successfully");
         }
 
         [HttpPut]
-        public JsonResult Put(Employee emp)
-        {
+        public JsonResult Put(Employee emp){
             string query = @"
                 update Employee
                 set EmployeeName = @EmployeeName,
                 Department = @Department,
                 DateOfJoining = @DateOfJoining,
                 PhotoFileName = @PhotoFileName
-                where EmployeeId = @EmployeeId
-            ";
+                where EmployeeId = @EmployeeId";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+            
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
+                
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
+                
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
+                    
                     myCommand.Parameters.AddWithValue("@EmployeeId", emp.EmployeeId);
                     myCommand.Parameters.AddWithValue("@EmployeeName", emp.EmployeeName);
                     myCommand.Parameters.AddWithValue("@Department", emp.Department);
                     myCommand.Parameters.AddWithValue("@DateOfJoining", Convert.ToDateTime(emp.DateOfJoining));
                     myCommand.Parameters.AddWithValue("@PhotoFileName", emp.PhotoFileName);
+                   
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult("Update successfully");
         }
 
         [HttpDelete("{id}")]
-        public JsonResult Delete(int id)
-        {
+        public JsonResult Delete(int id){
+            
             string query = @"
                 delete from Employee
-                where EmployeeId = @EmployeeId
-            ";
+                where EmployeeId = @EmployeeId";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
+            
+            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource)){
+                
                 myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
+                
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon)){
+                    
                     myCommand.Parameters.AddWithValue("@EmployeeId", id);
                     myReader = myCommand.ExecuteReader();
+                    
                     table.Load(myReader);
 
                     myReader.Close();
                     myCon.Close();
                 }
-
             }
 
             return new JsonResult("Deleted successfully");
@@ -156,27 +154,26 @@ namespace WebAPI_V2.Controllers
 
         [Route("SaveFile")]
         [HttpPost]
-        public JsonResult SaveFile()
-        {
-            try
-            {
+        public JsonResult SaveFile(){
+            
+            try{
+
                 var httpRequest = Request.Form;
                 var postedFile = httpRequest.Files[0];
                 string filename = postedFile.FileName;
                 var physicalPath = _env.ContentRootPath + "/Photos/" + filename;
-                using (var stream = new FileStream(physicalPath, FileMode.Create))
-                {
+                
+                using (var stream = new FileStream(physicalPath, FileMode.Create)){
                     postedFile.CopyTo(stream);
                 }
 
                 return new JsonResult(filename);
             }
-            catch (Exception)
-            {
+
+            catch (Exception){
+
                 return new JsonResult("anonymous.png");
             }
         }
-
-
     }
 }
